@@ -8,19 +8,10 @@ namespace test
         static void Main(string[] args)
         {
             var nummbers = new int[] {54,62,45,12,1,15,78,0,2,3,154,5,2,5,9,8,62,0,5,2,55,6,25,888};
-            var bst = new Bst();
-            var nods = new Node[nummbers.Length];
-            //convert int to node
-            bst.MakeNodeArry(nummbers, nods);
-            //make tree
-            bst.treeviwe(nods);
-            //sorting arry 
-            var sorted = bst.sorting(nods[0]);
-            //print the sorted arry 
-            foreach (var item in sorted)
-            {
-                Console.WriteLine(item);
-            }
+            
+            var bst = new Bst(nummbers);
+            var sortedarry = bst.treeviwe(nummbers);
+        
         }
         public class Node
         {
@@ -35,9 +26,19 @@ namespace test
         }
         public class Bst
         {
-            private List<int> sortedArry = new List<int> { };
-            public void maping(Node node1, Node node2)
+            public Bst(int[] nums)
             {
+                _nodes = new Node[nums.Length];
+                MakeNodeArry(nums);
+            }
+            private Node[] _nodes;
+            private List<int> sortedArry = new List<int> { };
+            private Node node1 = new Node(0);
+            private Node node2 = new Node(0);
+            private void maping(int root,int root2)
+            {
+                node1 = SearchBetwinNodes(root);
+                node2 = SearchBetwinNodes(root2);
                 if (node2.value != node1.value)
                 {
                     if (node2.value < node1.value)
@@ -48,7 +49,7 @@ namespace test
                         }
                         else
                         {
-                            maping(node1.childLeft, node2);
+                            maping(node1.childLeft.value, node2.value);
                         }
                     }
                     if (node2.value > node1.value)
@@ -59,41 +60,55 @@ namespace test
                         }
                         else
                         {
-                            maping(node1.childRight, node2);
+                            maping(node1.childRight.value, node2.value);
                         }
 
                     }
                 }
             }
-            public void treeviwe(Node[] nodes)
+            private Node SearchBetwinNodes(int root)
+            {
+                for (int i = 0; i < _nodes.Length; i++)
+                {
+                    if (_nodes[i].value == root )
+                    {
+                        return _nodes[i];
+                    }
+                }
+                return new Node(root);
+            }
+            public int[] treeviwe(int[] nummbers)
             {
                 //var sortedArr = new int[nodes.Length];
-                for (int i = 0; i < nodes.Length - 1; i++)
+                for (int i = 0; i < _nodes.Length - 1; i++)
                 {
-                    maping(nodes[0], nodes[i + 1]);
+                    maping(nummbers[0], nummbers[i + 1]);
                 }
+                return sortingfaz(_nodes[0]);
             }
-                //todo: make sorted arry
-            public int[] sorting(Node nodes)
+            private int[] sortingfaz(Node nodes)
             {
                 if (nodes.childLeft != null)
                 {
-                    sorting(nodes.childLeft);
+                    sortingfaz(nodes.childLeft);
                 }
                 //Console.WriteLine(nodes.value);
                 sortedArry.Add(nodes.value);
                 if (nodes.childRight != null)
                 {
-                    sorting(nodes.childRight);
+                    sortingfaz(nodes.childRight);
                 }
                 return sortedArry.ToArray();
             }
+            public void insert(Node node)
+            {
 
-            public void MakeNodeArry(int[] arr, Node[] nodes)
+            }
+            private void MakeNodeArry(int[] arr)
             {
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    nodes[i] = new Node(arr[i]);
+                    _nodes[i] = new Node(arr[i]);
                 }
             }
 
